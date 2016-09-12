@@ -75,7 +75,6 @@ def run_experiments():
     demos = ["demo_%s_%d"%(skill, di) for di in [1,2] for skill in ["remove_red_drive","replace_red_with_green","replace_red_with_spare","swap_red_with_green"]]
     # Block stacking demos
     demos += ["demo_il", "demo_ai", "demo_um"]
-    demos = ["demo_um"]
     # Cover demos
     print("Covering demos...")
     for demo_name in demos:
