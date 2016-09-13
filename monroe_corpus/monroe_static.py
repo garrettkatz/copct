@@ -9,7 +9,7 @@ locs = ("TEXACO1", "STRONG", "PARK-RIDGE", "ROCHESTER-GENERAL", "BRIGHTON-DUMP",
 poslocs = ("TEXACO1", "STRONG", "PARK-RIDGE", "ROCHESTER-GENERAL", "MARKETPLACE", "AIRPORT", "BRIGHTON-HIGH", "MENDON-POND", "12-CORNERS", "PITTSFORD-PLAZA", "BRIGHTON-DUMP", "HENRIETTA-DUMP")
 
 # Water and power companies.
-# Hash tables that map companies onto tuples of the locations they service.
+# Dicts that map companies onto tuples of the locations they service.
 watercos = {
     "ROCH-WATER":("TEXACO1","STRONG","ROCHESTER-GENERAL","MARKETPLACE","AIRPORT","BRIGHTON-HIGH","12-CORNERS","BRIGHTON-DUMP","HENRIETTA-DUMP"),
     "MONROE-WATER":("PARK-RIDGE","PITTSFORD-PLAZA"),

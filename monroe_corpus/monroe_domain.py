@@ -6,16 +6,16 @@ This way the top-level causes can be easily omitted in the modified Monroe exper
 
 The causes functions have a separate case for each rule in the original knowledge base.
 Original lisp rule for each case is copied verbatim in the comments.
-Lisp operator format is:
+Original lisp operator format is:
 (:method (name param1 param2 ...) branch1 branch2 ...)
 Branch format is:
   branch-label
   (precond1 precond2 ...)
   (subtask1 subtask2 ...)
 
-Sometimes effects are omitted if they wouldn't change anything.
+Sometimes effects are omitted from the original corpus data if they wouldn't change anything.
 For example, a GET-TO will be missing if things are already where they need to be gotten to.
-Additional cases are included for these situations.
+Additional cases are included in the causes implementation for these situations.
 
 """
 from monroe_static import locs, watercos, powercos, poslocs, sleaders, gens, food, pcrews

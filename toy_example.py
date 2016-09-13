@@ -16,7 +16,7 @@ if __name__ == "__main__":
     # toy observed sequence
     w = tuple('gmrgmr')
     # compute explanations
-    status, tlcovs, g = copct.explain(causes, M, w, verbose=True)
+    status, tlcovs, g = copct.explain(causes, w, M=M, verbose=True)
     # Prune by minimum cardinality
     tlcovs_ml, ml = copct.minCardinalityTLCovers(tlcovs)
     

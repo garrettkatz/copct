@@ -6,10 +6,10 @@ def causes(v):
     """
     Causal relation for the robotic imitation learning domain.
     v is a sequence of intentions or actions.
-    Each element v[i] is of the form (state, schema, parameter values).
+    Each element v[i] is of the form (state, task name, parameter values).
     Returns the set of all possible causes of v.
     """
-    g = set()
+    g = set() # set of possible causes
     arm_ids = ("left","right")
     clear_ids = ("discard-bin")
     states, tasks, args = zip(*v)
@@ -86,7 +86,7 @@ def run_experiments():
         exec(exec_str, globals())
         # Cover and prune by each parsimony criterion
         results[demo_name] = {}
-        status, tlcovs, g = copct.explain(causes, M, demo)
+        status, tlcovs, g = copct.explain(causes, demo, M=M)
         results[demo_name]["tlcovs"], results[demo_name]["g"] = tlcovs, g
         results[demo_name]["tlcovs_mc"] = [u for (u,_,_,_,_) in copct.minCardinalityTLCovers(tlcovs)[0]]
         results[demo_name]["tlcovs_md"] = [u for (u,_,_,_,_) in copct.maxDepthTLCovers(tlcovs)[0]]

@@ -24,7 +24,7 @@ def run_sample(M, causes, u_correct, w, verbose=True, timeout=300, timeout_irr=3
 
     # run copct
     start = time.clock()
-    status, tlcovs, g = copct.explain(causes, M, w, verbose=verbose, timeout=timeout)
+    status, tlcovs, g = copct.explain(causes, w, M=M, verbose=verbose, timeout=timeout)
     runtime = time.clock()-start
 
     # record execution info
@@ -183,9 +183,9 @@ def show_results(filename="monroe_results.pkl"):
 
 if __name__ == "__main__":
 
-    # # Run experiments
-    run_experiments() # original
-    run_experiments(use_original=False) # modified
+    # Run experiments.  Change num_samples to 5000 to process the full corpus (may take several days of compute time).
+    run_experiments(num_samples=10) # original
+    run_experiments(num_samples=10, use_original=False) # modified
 
     # Show results
     show_results() # original
