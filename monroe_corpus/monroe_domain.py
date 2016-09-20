@@ -745,8 +745,8 @@ def top_causes(v):
             loc = m.pop()[0]
             g.add((states[0],'QUELL-RIOT',(loc,)))
         else:
-            p1 = params[-2][1]
-            m = unify(states[2][1], ('ATLOC', p1, None))
+            p1 = params[1][1]
+            m = unify(states[1][1], ('ATLOC', p1, None))
             if len(m)==1:
                 loc = m.pop()[0]
                 g.add((states[0],'QUELL-RIOT',(loc,)))

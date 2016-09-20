@@ -7,7 +7,7 @@ import copct
 import monroe_corpus.monroe_domain as md
 from monroe_corpus.monroe_corpus import corpus
 
-def run_sample(M, causes, u_correct, w, verbose=True, timeout=300, timeout_irr=300):
+def run_sample(M, causes, u_correct, w, verbose=True, timeout=600, timeout_irr=300):
     """
     Run experimental evaluation on one sample plan.
     Inputs:
@@ -121,7 +121,10 @@ def show_results(filename="monroe_results.pkl"):
     for criterion in ["","_mc","_irr","_md","_xd", "_mp", "_fsn", "_fsx"]:
         r = {s:results[s] for s in results if "correct%s"%criterion in results[s] and results[s]["correct"]}
         num_correct = len([s for s in r if r[s]["correct%s"%criterion]])
-        print("%s: %d of %d (%d %%)"%(criterion, num_correct, len(r), 100*num_correct/len(r)))
+        if len(r) > 0:
+            print("%s: %d of %d (%d %%)"%(criterion, num_correct, len(r), 100*num_correct/len(r)))
+        else:
+            print("%s: %d of %d"%(criterion, num_correct, len(r)))
 
     # specificity
     counts = []
@@ -180,13 +183,14 @@ def show_results(filename="monroe_results.pkl"):
     ax.set_xticklabels(labels, rotation=0)
     ax.set_yticklabels(labels, rotation=0)
     fig.canvas.draw()
+    return results
 
 if __name__ == "__main__":
 
     # Run experiments.  Change num_samples to 5000 to process the full corpus (may take several days of compute time).
-    run_experiments(num_samples=10) # original
-    run_experiments(num_samples=10, use_original=False) # modified
+    run_experiments(num_samples=500) # original
+    run_experiments(num_samples=500, use_original=False) # modified
 
     # Show results
-    show_results() # original
-    show_results(filename="monroe_results_modified.pkl") # modified
+    results = show_results() # original
+    results_modified = show_results(filename="monroe_results_modified.pkl") # modified

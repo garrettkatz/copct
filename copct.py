@@ -69,7 +69,7 @@ def topLevelCovers(g, N, M, u=(), k=(0,), d_min=(), d_max=(), ts=()):
                 for t in topLevelCovers(g, N, M, u+(u1,), k+(k1,), d_min+(d1_min,), d_max+(d1_max,), ts+(ts1,)):
                     yield t
 
-def explain(causes, w, M=None, verbose=False, timeout=300, max_tlcovs=100000):
+def explain(causes, w, M=None, verbose=False, timeout=300, max_tlcovs=13000000):
     """
     Computes all explanations (top-level covers) for an observed sequence.
     Inputs:
