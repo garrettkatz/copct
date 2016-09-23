@@ -1,5 +1,5 @@
 """
-Two helper functions for dealing with logic programming formulations
+Helper functions for dealing with logic programming formulations
 """
 
 def unify(facts, query):
@@ -12,7 +12,7 @@ def unify(facts, query):
     matches = set()
     for fact in facts:
         if not len(fact) == len(query): continue
-        if all([query[i] in [None, fact[i]] for i in range(len(fact))]): continue
+        if not all([query[i] in [None, fact[i]] for i in range(len(fact))]): continue
         matches.add(tuple(fact[i] for i in range(len(fact)) if query[i] is None))
     return matches
 

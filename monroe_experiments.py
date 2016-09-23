@@ -7,7 +7,7 @@ import copct
 import monroe_corpus.monroe_domain as md
 from monroe_corpus.monroe_corpus import corpus
 
-def run_sample(M, causes, u_correct, w, verbose=True, timeout=600, timeout_irr=300):
+def run_sample(M, causes, u_correct, w, verbose=True, timeout=600, timeout_irr=300, max_tlcovs=13000000):
     """
     Run experimental evaluation on one sample plan.
     Inputs:
@@ -18,13 +18,14 @@ def run_sample(M, causes, u_correct, w, verbose=True, timeout=600, timeout_irr=3
         verbose: if True, print copct verbose output
         timeout: timeout for explain
         timeout_irr: timout for irredundancy
+        max_tlcovs: maximum top-level cover count for explain
     Outputs:
         result: dictionary with various key:value pairs summarizing the outcomes of the experiment.
     """
 
     # run copct
     start = time.clock()
-    status, tlcovs, g = copct.explain(causes, w, M=M, verbose=verbose, timeout=timeout)
+    status, tlcovs, g = copct.explain(causes, w, M=M, verbose=verbose, timeout=timeout, max_tlcovs=max_tlcovs)
     runtime = time.clock()-start
 
     # record execution info
@@ -64,7 +65,7 @@ def run_sample(M, causes, u_correct, w, verbose=True, timeout=600, timeout_irr=3
 
     return result
 
-def run_experiments(use_original=True, num_samples=None, filename=None):
+def run_experiments(use_original=True, num_samples=None, filename=None, verbose=True, timeout=600, timeout_irr=300, max_tlcovs=13000000):
     """
     Run experiments on many samples in the corpus.
     Inputs:
@@ -72,6 +73,7 @@ def run_experiments(use_original=True, num_samples=None, filename=None):
         num_samples: number of randomly chosen sample plans from the corpus to use.  Defaults to all of them.
         filename: name of file in which to save results.
             Defaults to "monroe_results.pkl" or "monroe_results_modified.pkl" depending on use_original flag.
+        verbose, timeout, timeout_irr, max_tlcovs: additional parameters for run_sample
     Outputs:
        results[s]: dictionary or results for s^th sample plan
     """
@@ -93,11 +95,12 @@ def run_experiments(use_original=True, num_samples=None, filename=None):
         if use_original:
             u_correct = corpus[sample][0]
             causes = md.causes
-            results[sample] = run_sample(md.M, causes, u_correct, w, timeout_irr=0)
+            # singleton top-level covers are always irredundant, no need to check (timeout_irr=0)
+            results[sample] = run_sample(md.M, causes, u_correct, w, verbose=verbose, timeout=timeout, max_tlcovs=max_tlcovs, timeout_irr=0)
         else:
             u_correct = corpus[sample][1]
             causes = md.mid_causes
-            results[sample] = run_sample(md.M, causes, u_correct, w)
+            results[sample] = run_sample(md.M, causes, u_correct, w, verbose=verbose, timeout=timeout, max_tlcovs=max_tlcovs, timeout_irr=timeout_irr)
         results_file = open(filename, "w")
         pkl.dump(results, results_file)
         results_file.close()
@@ -188,8 +191,8 @@ def show_results(filename="monroe_results.pkl"):
 if __name__ == "__main__":
 
     # Run experiments.  Change num_samples to 5000 to process the full corpus (may take several days of compute time).
-    run_experiments(num_samples=500) # original
-    run_experiments(num_samples=500, use_original=False) # modified
+    run_experiments(num_samples=50) # original
+    run_experiments(num_samples=50, use_original=False) # modified
 
     # Show results
     results = show_results() # original
