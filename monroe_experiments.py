@@ -90,13 +90,16 @@ def run_experiments(use_original=True, num_samples=None, filename=None, verbose=
     results = {}
     for s in range(len(samples)):
         sample = samples[s]
-        print("Starting sample %d of %d (plan # %d in corpus)..."%(s, len(samples), sample))
+        print("Starting sample %d of %d (plan # %d in %s corpus)..."%(s, len(samples), sample, "original" if use_original else "modified"))
         w = corpus[sample][2]
         if use_original:
             u_correct = corpus[sample][0]
             causes = md.causes
             # singleton top-level covers are always irredundant, no need to check (timeout_irr=0)
             results[sample] = run_sample(md.M, causes, u_correct, w, verbose=verbose, timeout=timeout, max_tlcovs=max_tlcovs, timeout_irr=0)
+            if results[sample]["status"] == "Success":
+                results[sample]["|tlcovs_irr|"] = results[sample]["|tlcovs|"]
+                results[sample]["correct_irr"] = results[sample]["correct"]
         else:
             u_correct = corpus[sample][1]
             causes = md.mid_causes
@@ -141,7 +144,6 @@ def show_results(filename="monroe_results.pkl"):
     print("90 %% of samples <= %d MP covers"%(np.sort(counts[4])[int(np.floor(0.9*len(counts[4])))]))
 
     # histogram
-    plt.ion()
     fig = plt.figure()
     fig.subplots_adjust(bottom=0.15)
     bins = np.arange(7)
@@ -190,10 +192,18 @@ def show_results(filename="monroe_results.pkl"):
 
 if __name__ == "__main__":
 
-    # Run experiments.  Change num_samples to 5000 to process the full corpus (may take several days of compute time).
-    run_experiments(num_samples=50) # original
-    run_experiments(num_samples=50, use_original=False) # modified
+    full_experiments = raw_input("Run full experiments?  May use up to 32GB of RAM and about one week of CPU time. [y/n]")
+
+    # Run experiments.
+    if full_experiments == "y":
+        run_experiments() # original
+        run_experiments(use_original=False) # modified
+    else:
+        run_experiments(num_samples=50, max_tlcovs=1000) # original
+        run_experiments(num_samples=50, max_tlcovs=1000, use_original=False) # modified
 
     # Show results
+    plt.ion()
     results = show_results() # original
     results_modified = show_results(filename="monroe_results_modified.pkl") # modified
+    raw_input("Enter to close...")
