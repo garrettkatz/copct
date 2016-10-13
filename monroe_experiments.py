@@ -91,19 +91,14 @@ def run_experiments(use_original=True, num_samples=None, filename=None, verbose=
     for s in range(len(samples)):
         sample = samples[s]
         print("Starting sample %d of %d (plan # %d in %s corpus)..."%(s, len(samples), sample, "original" if use_original else "modified"))
-        w = corpus[sample][2]
         if use_original:
             u_correct = corpus[sample][0]
             causes = md.causes
-            # singleton top-level covers are always irredundant, no need to check (timeout_irr=0)
-            results[sample] = run_sample(md.M, causes, u_correct, w, verbose=verbose, timeout=timeout, max_tlcovs=max_tlcovs, timeout_irr=0)
-            if results[sample]["status"] == "Success":
-                results[sample]["|tlcovs_irr|"] = results[sample]["|tlcovs|"]
-                results[sample]["correct_irr"] = results[sample]["correct"]
         else:
             u_correct = corpus[sample][1]
             causes = md.mid_causes
-            results[sample] = run_sample(md.M, causes, u_correct, w, verbose=verbose, timeout=timeout, max_tlcovs=max_tlcovs, timeout_irr=timeout_irr)
+        w = corpus[sample][2]
+        results[sample] = run_sample(md.M, causes, u_correct, w, verbose=verbose, timeout=timeout, max_tlcovs=max_tlcovs, timeout_irr=timeout_irr)
         results_file = open(filename, "w")
         pkl.dump(results, results_file)
         results_file.close()
@@ -128,27 +123,34 @@ def show_results(filename="monroe_results.pkl"):
         r = {s:results[s] for s in results if "correct%s"%criterion in results[s] and results[s]["correct"]}
         num_correct = len([s for s in r if r[s]["correct%s"%criterion]])
         if len(r) > 0:
-            print("%s: %d of %d (%d %%)"%(criterion, num_correct, len(r), 100*num_correct/len(r)))
+            print("%s: %d of %d (%.1f %%)"%(criterion, num_correct, len(r), 100.0*num_correct/len(r)))
+
         else:
             print("%s: %d of %d"%(criterion, num_correct, len(r)))
 
     # specificity
-    counts = []
+    counts = {}
     for criterion in ["_mc", "_irr", "_md", "_xd", "_mp"]:
-        counts.append([results[s]["|tlcovs%s|"%criterion] for s in results if "|tlcovs%s|"%criterion in results[s]])
+        #counts[criterion] = [results[s]["|tlcovs%s|"%criterion] for s in results if "|tlcovs%s|"%criterion in results[s] and results[s]['correct']]
+        counts[criterion] = [results[s]["|tlcovs%s|"%criterion] for s in results if "|tlcovs%s|"%criterion in results[s]]
 
     # count summaries
-    print("%d of %d samples have 1 MC cover"%(np.count_nonzero(np.array(counts[0])==1), len(counts[0])))
-    print("90 %% of samples <= %d MC covers"%(np.sort(counts[0])[int(np.floor(0.9*len(counts[0])))]))
-    print("%d of %d samples have 1 MP cover"%(np.count_nonzero(np.array(counts[4])==1), len(counts[4])))
-    print("90 %% of samples <= %d MP covers"%(np.sort(counts[4])[int(np.floor(0.9*len(counts[4])))]))
+    print("%d of %d samples have >= 100 MC covers"%(np.count_nonzero(np.array(counts["_mc"])>=100), len(counts["_mc"])))
+    print("%d of %d samples have 1 MC cover"%(np.count_nonzero(np.array(counts["_mc"])==1), len(counts["_mc"])))
+    print("%d samples (~90 %%) <= %d MC covers"%(int(np.floor(0.9*len(counts["_mc"]))), np.sort(counts["_mc"])[int(np.floor(0.9*len(counts["_mc"])))]))
+    print("%d of %d samples have 1 MP cover"%(np.count_nonzero(np.array(counts["_mp"])==1), len(counts["_mp"])))
+    print("%d samples (~90 %%) <= %d MP covers"%(int(np.floor(0.9*len(counts["_mp"]))), np.sort(counts["_mp"])[int(np.floor(0.9*len(counts["_mp"])))]))
+
+    # top-level vs irredundant
+    r = {k:results[k] for k in results if '|tlcovs_irr|' in results[k]}
+    print('top-level == irr in %d plans'%(len([k for k in r if r[k]['|tlcovs|'] == r[k]['|tlcovs_irr|']])))
 
     # histogram
     fig = plt.figure()
     fig.subplots_adjust(bottom=0.15)
     bins = np.arange(7)
     greys = [str(g) for g in np.linspace(0.0,1.0,len(counts))]
-    _,bins,_ = plt.hist([np.log10(c) for c in counts], bins=bins, color=greys)
+    _,bins,_ = plt.hist([np.log10(counts[c]) for c in ["_mc", "_irr", "_md", "_xd", "_mp"]], bins=bins, color=greys)
     plt.xlabel('# of covers found')
     plt.ylabel('# of times in corpus')
     plt.legend(['MC','IR','MD','XD','MP'])
@@ -173,11 +175,10 @@ def show_results(filename="monroe_results.pkl"):
     ax.set_ylim([0, len(results)])
     plt.show()
 
-    # top-level vs irredundant
+    # scatter
     fig = plt.figure()
     ax = plt.gca()
     fig.subplots_adjust(bottom=0.15)
-    r = {k:results[k] for k in results if '|tlcovs_irr|' in results[k]}
     ax.scatter(np.log2([r[k]['|tlcovs|'] for k in r]), np.log2([r[k]['|tlcovs_irr|'] for k in r]))
     plt.xlabel("# of top-level covers")
     plt.ylabel("# of irredundant top-level covers")
@@ -192,7 +193,7 @@ def show_results(filename="monroe_results.pkl"):
 
 if __name__ == "__main__":
 
-    full_experiments = raw_input("Run full experiments?  May use up to 32GB of RAM and about one week of CPU time. [y/n]")
+    full_experiments = raw_input("Run full experiments?  May use up to 32GB of RAM and over a week of CPU time. [y/n]")
 
     # Run experiments.
     if full_experiments == "y":
