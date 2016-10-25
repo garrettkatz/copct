@@ -40,21 +40,23 @@ Since `copct` is specialized to deal with ordering constraints, a central concep
 
 A "covering forest" of *w* is an ordered forest whose leaf sequence is *w*, and each of whose child-parent relationships are in *C*.  For example,
 
->  c
-  /\
- a  b  f
-
->  d
-
->  /\
-
-> a  b  f
-
->    e
->   / \
->  d   \
->  /\   \
-> a  b   f
+```
+   c
+  / \
+ a   b   f
+```
+```
+   d
+  / \
+ a   b  f
+```
+```
+     e
+    / \
+   d   \
+  /\    \
+ a  b    f
+```
 
 are all covering forests of (a,b,f).  Whereas the elements of *C* are all *direct* causal links between causes and effects, covering forests also capture multiple layers of causation that result from *causal chaining* (e.g., e causes d, and d causes a,b).
 
@@ -153,4 +155,4 @@ signifies an intention to use the left hand to pick up block 1, which is current
 
 A large-scale example that models an emergency response team's intentions and actions in Monroe County of upstate New York.  There are 5000 plans (i.e., observed action sequences); `copct` is used on each one to infer the top-level intentions that best explain it.  The input data was taken from the [Monroe Plan Corpus](https://www.cs.rochester.edu/research/speech/monroe-plan/).
 
-On average, each of the 5000 plans takes about a second to process, but in the worst case some take several minutes or more.  Running the example on the full corpus may take on the order of 1 week of computation time.  By default, the script will only process a random subset of 10 plans.  To run on the full corpus, change the `num_samples` keyword argument to 5000 in the `__main__` code block.
+On average, each of the 5000 plans takes about a second to process, but in the worst case some take several minutes or more.  Running the example on the full corpus may take on the order of 1 week of computation time and near 32GB of memory.  The script will prompt you to select either the full experiments, or a random subset of 50 plans with the number of covers capped to reduce memory usage.
