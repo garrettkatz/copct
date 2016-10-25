@@ -6,7 +6,7 @@
 
 ## Requirements
 
-`copct` has been tested with Python 2.7.6 and 3.4.3 on Ubuntu 14.04, but it should work with other OS's and other Python versions >= 2.7.  [Some examples](https://github.com/garrettkatz/copct#monroe_experiments.py) require [NumPy](http://www.numpy.org/) and [Matplotlib](http://matplotlib.org/).
+`copct` has been tested with Python 2.7.6 and 3.4.3 on Ubuntu 14.04, but it should work with other OS's and other Python versions >= 2.7.  [Some examples](https://github.com/garrettkatz/copct#monroe_experimentspy) require [NumPy](http://www.numpy.org/) and [Matplotlib](http://matplotlib.org/).
 
 ## Installation
 
