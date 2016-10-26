@@ -66,7 +66,7 @@ Good explanations are generally expected to satisfy some notion of parsimony.  `
 
 ### Encoding Causal Knowledge for copct
 
-You expose causal knowledge to `copct` by implementing a `causes` function.  Given any sequence `v`, `causes(v)` should return the set of all events that can directly cause `v` - that is, all `u` for which `(u,v)` is included in the causal relation.  For example, you could implement a `causes` function based on the `V` and `C` above as follows:
+You enter causal knowledge to `copct` by implementing a `causes` function.  Given any sequence `v`, `causes(v)` should return the set of all events that can directly cause `v` - that is, all `u` for which `(u,v)` is included in the causal relation.  For example, you could implement a `causes` function based on the `V` and `C` above as follows:
 
 ```python
 >>> def causes(v):
@@ -135,6 +135,8 @@ For more information on algorithmic details and proofs, empirical performance, p
 
 [Katz, Garrett, et al. "Imitation Learning as Cause-Effect Reasoning." International Conference on Artificial General Intelligence. Springer International Publishing, 2016.](http://link.springer.com/chapter/10.1007/978-3-319-41649-6_7)
 
+(The published paper is available at Springer via [http://dx.doi.org/10.1007/978-3-319-41649-6](http://dx.doi.org/10.1007/978-3-319-41649-6), a preprint is available [here](http://www.cs.umd.edu/~gkatz/katz_et_al_AGI2016.pdf).)
+
 ## Examples
 
 This repository includes three examples of cause-effect reasoning problems where `copct` can be used.  Each example can be run as a python script.
@@ -150,6 +152,8 @@ A more realistic example that models an agent's intentions and actions in a tabl
 > (('on', 'block1', 'table'), 'pickup', ('left-hand', 'block1'))
 
 signifies an intention to use the left hand to pick up block 1, which is currently on the table.  There are eleven demonstrations of tabletop activities (i.e., observed action sequences) to be explained, ranging in length from 3 to 39 actions.  `copct` is used on each demonstration to infer the plausible top-level intention sequences that can explain it.  The last demonstration, which is the longest, may take a few minutes to process.
+
+More information about this domain, including videos of `copct` in action on board a real robot, is available [here](http://www.cs.umd.edu/~reggia/supplement/index.html).
 
 ### monroe_experiments.py
 
