@@ -151,9 +151,10 @@ A more realistic example that models an agent's intentions and actions in a tabl
 
 > (('on', 'block1', 'table'), 'pickup', ('left-hand', 'block1'))
 
-signifies an intention to use the left hand to pick up block 1, which is currently on the table.  There are eleven demonstrations of tabletop activities (i.e., observed action sequences) to be explained, ranging in length from 3 to 39 actions.  `copct` is used on each demonstration to infer the plausible top-level intention sequences that can explain it.  The last demonstration, which is the longest, may take several minutes to process.
+signifies an intention to use the left hand to pick up block 1, which is currently on the table.  There are eleven demonstrations of tabletop activities (i.e., observed action sequences) to be explained, ranging in length from 3 to 39 actions.  `copct` is used on each demonstration to infer the plausible top-level intention sequences that can explain it.  More information about this domain, including videos of `copct` in action on board a real robot, is available [here](http://www.cs.umd.edu/~reggia/supplement/index.html).
 
-More information about this domain, including videos of `copct` in action on board a real robot, is available [here](http://www.cs.umd.edu/~reggia/supplement/index.html).
+The script will prompt you to choose whether to apply the "irredundancy" parsimony criterion.  The last demonstration, which is the longest, may take several minutes to process if this option is chosen.
+
 
 ### monroe_experiments.py
 
