@@ -151,7 +151,7 @@ A more realistic example that models an agent's intentions and actions in a tabl
 
 > (('on', 'block1', 'table'), 'pickup', ('left-hand', 'block1'))
 
-signifies an intention to use the left hand to pick up block 1, which is currently on the table.  There are eleven demonstrations of tabletop activities (i.e., observed action sequences) to be explained, ranging in length from 3 to 39 actions.  `copct` is used on each demonstration to infer the plausible top-level intention sequences that can explain it.  The last demonstration, which is the longest, may take a few minutes to process.
+signifies an intention to use the left hand to pick up block 1, which is currently on the table.  There are eleven demonstrations of tabletop activities (i.e., observed action sequences) to be explained, ranging in length from 3 to 39 actions.  `copct` is used on each demonstration to infer the plausible top-level intention sequences that can explain it.  The last demonstration, which is the longest, may take several minutes to process.
 
 More information about this domain, including videos of `copct` in action on board a real robot, is available [here](http://www.cs.umd.edu/~reggia/supplement/index.html).
 
@@ -159,4 +159,4 @@ More information about this domain, including videos of `copct` in action on boa
 
 A large-scale example that models an emergency response team's intentions and actions in Monroe County of upstate New York.  There are 5000 plans (i.e., observed action sequences); `copct` is used on each one to infer the top-level intentions that best explain it.  The input data was taken from the [Monroe Plan Corpus](https://www.cs.rochester.edu/research/speech/monroe-plan/).
 
-On average, each of the 5000 plans takes about a second to process, but in the worst case some take several minutes or more.  Running the example on the full corpus may take on the order of 1 week of computation time and near 32GB of memory.  The script will prompt you to select either the full experiments, or a random subset of 50 plans with the number of covers capped to reduce memory usage.
+On average, each of the 5000 plans takes a matter of seconds to process, but in the worst case some take several minutes or more.  Running the example on the full corpus may take on the order of 1 week of computation time and up to 32GB of RAM for certain rare plans.  The script will prompt you to select either the full experiments, or a random subset of 50 plans with the number of covers capped to reduce memory usage.

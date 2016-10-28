@@ -1,4 +1,6 @@
-import time as time
+#!/usr/bin/env python
+
+import time
 import copct
 
 M = 3
@@ -69,7 +71,7 @@ def causes(v):
                     g.add((states[0],"close dock drawer",(object_id,)))
     return g
 
-def run_experiments():
+def run_experiments(check_irr=True):
     results = {}
     # Dock maintenance demos
     demos = ["demo_%s_%d"%(skill, di) for di in [1,2] for skill in ["remove_red_drive","replace_red_with_green","replace_red_with_spare","swap_red_with_green"]]
@@ -86,7 +88,9 @@ def run_experiments():
         exec(exec_str, globals())
         # Cover and prune by each parsimony criterion
         results[demo_name] = {}
+        start_time = time.clock()
         status, tlcovs, g = copct.explain(causes, demo, M=M)
+        results[demo_name]["run_time"] = time.clock()-start_time
         results[demo_name]["tlcovs"], results[demo_name]["g"] = tlcovs, g
         results[demo_name]["tlcovs_mc"] = [u for (u,_,_,_,_) in copct.minCardinalityTLCovers(tlcovs)[0]]
         results[demo_name]["tlcovs_md"] = [u for (u,_,_,_,_) in copct.maxDepthTLCovers(tlcovs)[0]]
@@ -94,8 +98,13 @@ def run_experiments():
         results[demo_name]["tlcovs_mp"] = [u for (u,_,_,_,_) in copct.minParametersTLCovers(tlcovs)[0]]
         results[demo_name]["tlcovs_fsn"] = [u for (u,_,_,_,_) in copct.minForestSizeTLCovers(tlcovs)[0]]
         results[demo_name]["tlcovs_fsx"] = [u for (u,_,_,_,_) in copct.maxForestSizeTLCovers(tlcovs)[0]]
-        status, tlcovs_irr = copct.irredundantTLCovers(tlcovs, timeout=1000)
-        if status == False: print("timeout oops")
+        start_time = time.clock()
+        if check_irr:
+            status, tlcovs_irr = copct.irredundantTLCovers(tlcovs, timeout=1000)
+            if status == False: print("IRR timeout")
+        else:
+            tlcovs_irr = tlcovs
+        results[demo_name]["run_time_irr"] = time.clock()-start_time
         results[demo_name]["tlcovs_irr"] = [u for (u,_,_,_,_) in tlcovs_irr]
         results[demo_name]["u in tlcovs"] = ground_truth in [u for (u,_,_,_,_) in tlcovs]
         results[demo_name]["u in tlcovs_mc"] = ground_truth in results[demo_name]["tlcovs_mc"]
@@ -112,11 +121,13 @@ def run_experiments():
         correct_demos = [d for d in results if results[d]["u in tlcovs%s"%crit]]
         print('%s: %f%%'%(crit, 1.0*len(correct_demos)/len(demos)))
     print("# of covers found:")
-    print(["Demo"]+criteria)
+    print(["Demo","Runtime (explain)", "Runtime (irr)"]+criteria)
     for demo_name in demos:
         num_tlcovs = [len(results[demo_name]["tlcovs%s"%crit]) for crit in criteria]
-        print([demo_name]+num_tlcovs)
+        print([demo_name, results[demo_name]["run_time"], results[demo_name]["run_time_irr"]]+num_tlcovs)
     return results
 
 if __name__ == "__main__":
-    results = run_experiments()
+
+    check_irr = raw_input("Run irredundancy checks?  May take several minutes. [y/n]")
+    results = run_experiments(check_irr == "y")
