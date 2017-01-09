@@ -110,7 +110,7 @@ def run_experiments(use_original=True, num_samples=None, filename=None, verbose=
 
 def show_results(filename="monroe_results.pkl"):
     """
-    Print/plot results shown in publication
+    Print/plot results shown in publications
     Inputs:
         filename: name of file where results are saved
     """
@@ -191,6 +191,51 @@ def show_results(filename="monroe_results.pkl"):
     ax.set_xticklabels(labels, rotation=0)
     ax.set_yticklabels(labels, rotation=0)
     fig.canvas.draw()
+    return results
+
+def show_u_precise(filename="monroe_results.pkl"):
+    """
+    Print/plot full experiment precision results shown in TCDS
+    Inputs:
+        filename: name of file where results are saved
+    """
+
+    # load results
+    f = open(filename, "r")
+    results = pkl.load(f)
+    f.close()
+
+    # specificity
+    counts = {}
+    for criterion in ["", "_mc"]:
+        counts[criterion] = [results[s]["|tlcovs%s|"%criterion] for s in results if "|tlcovs%s|"%criterion in results[s]]
+
+    # count summaries
+    print("%d of %d samples have >= 100 MC covers"%(np.count_nonzero(np.array(counts["_mc"])>=100), len(counts["_mc"])))
+    print("%d of %d samples have 1 MC cover"%(np.count_nonzero(np.array(counts["_mc"])==1), len(counts["_mc"])))
+    print("%d samples (~90 %%) <= %d MC covers"%(int(np.floor(0.9*len(counts["_mc"]))), np.sort(counts["_mc"])[int(np.floor(0.9*len(counts["_mc"])))]))
+
+    # histogram
+    mpl.rcParams['pdf.fonttype'] = 42
+    mpl.rcParams['ps.fonttype'] = 42
+    fig = plt.figure()
+    fig.subplots_adjust(bottom=0.15)
+    # greys = [str(g) for g in np.linspace(0.0,1.0,len(counts))]
+    # _,bins,_ = plt.hist([np.log2(counts[c]) for c in ["", "_mc"]], color=greys)
+    plt.hist([np.log2(counts[""]), np.log2(counts["_mc"])], bins=25, color=['white','black'])
+    plt.xlabel('# of covers found')
+    plt.ylabel('# of testing examples')
+    plt.legend(['Top-level covers','MC top-level covers'])
+    ax = plt.gca()
+    xticks = ax.get_xticks()
+    xtick_labels = []
+    mpl.rcParams['mathtext.default'] = 'regular'
+    for t in xticks:
+        xtick_labels.append('%d'%(2**t))
+    xtick_labels[-1] = ''
+    ax.set_xticklabels(xtick_labels, rotation=0)
+    plt.show()
+
     return results
 
 if __name__ == "__main__":
