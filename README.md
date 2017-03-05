@@ -133,9 +133,11 @@ For full API documentation, use:
 
 For more information on algorithmic details and proofs, empirical performance, parsimony criteria available, and the example applications, please consult the following:
 
+[Katz, Garrett, et al. "A Novel Parsimonious Cause-Effect Reasoning Algorithm for Robot Imitation and Plan Recognition." IEEE Transactions on Cognitive and Developmental Systems, 2017.](http://ieeexplore.ieee.org/abstract/document/7812655/)
+
 [Katz, Garrett, et al. "Imitation Learning as Cause-Effect Reasoning." International Conference on Artificial General Intelligence. Springer International Publishing, 2016.](http://link.springer.com/chapter/10.1007/978-3-319-41649-6_7)
 
-(The published paper is available at Springer via [http://dx.doi.org/10.1007/978-3-319-41649-6](http://dx.doi.org/10.1007/978-3-319-41649-6), a preprint is available [here](http://www.cs.umd.edu/~gkatz/katz_et_al_AGI2016.pdf).)
+(The second paper is available at Springer via [http://dx.doi.org/10.1007/978-3-319-41649-6](http://dx.doi.org/10.1007/978-3-319-41649-6), a preprint is available [here](http://www.cs.umd.edu/~gkatz/katz_et_al_AGI2016.pdf).)
 
 ## Examples
 
