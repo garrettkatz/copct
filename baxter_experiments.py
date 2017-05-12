@@ -61,6 +61,13 @@ def causes(v):
             arms, rotations = zip(*args)
             if arms[0]==arms[1]:
                 g.add((states[0],"screw valve",(arms[0],sum(rotations))))
+        if tasks == ("screw valve","remove screw from valve"):
+            g.add((states[0],"remove screw from valve",()))
+        if tasks == ("move arm and grasp","remove screw from valve"):
+            object_id = args[0][1]
+            asm_type = dict(states[0])[object_id]
+            if asm_type == 'valve_screw':
+                g.add((states[0],"grasp and remove screw from valve",(object_id,)))
     if len(v)==3:
         if tasks == ("move arm and grasp","move grasped object","release"):
             arm_0, object_id = args[0]
