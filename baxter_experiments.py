@@ -57,6 +57,10 @@ def causes(v):
             asm_type = dict(states[0])[object_id]
             if (arm_0==arm_1) and not (asm_type=="DockDrawer"):
                 g.add((states[0],"move unobstructed object",(object_id, dest_id, dM, dt)))
+        if tasks == ("screw valve","screw valve"):
+            arms, rotations = zip(*args)
+            if arms[0]==arms[1]:
+                g.add((states[0],"screw valve",(arms[0],sum(rotations))))
     if len(v)==3:
         if tasks == ("move arm and grasp","move grasped object","release"):
             arm_0, object_id = args[0]
@@ -69,6 +73,12 @@ def causes(v):
                     g.add((states[0],"open dock drawer",(object_id, states[2])))
                 else:
                     g.add((states[0],"close dock drawer",(object_id,)))
+        if tasks in [("move arm and grasp","close ball","release"),("move arm and grasp","open ball","release")]:
+            arm_0, object_id = args[0]
+            arm_2, = args[2]
+            asm_type = dict(states[0])[object_id]
+            if (arm_0==arm_2) and (asm_type=="ball_swivel"):
+                g.add((states[0],tasks[1],()))
     return g
 
 def run_experiments(check_irr=True):

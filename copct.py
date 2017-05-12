@@ -63,7 +63,9 @@ def topLevelCovers(g, N, M, u=(), k=(0,), d_min=(), d_max=(), ts=()):
         yield (u, k, d_min, d_max, ts)
     else:
         for k1 in range(k[-1]+1,N+1):
-            for (u1,_,d1_min, d1_max, ts1) in g[k[-1],k1]:
+            # for (u1,_,d1_min, d1_max, ts1) in g[k[-1],k1]: # includes duplicates if same u with different _
+            g1 = set([(u1,d1_min,d1_max,ts1) for (u1,_,d1_min, d1_max, ts1) in g[k[-1],k1]])
+            for (u1,d1_min,d1_max,ts1) in g1:
                 if any([(u+(u1,))[-m:] == v for m in range(1,min(len(k),M)+1) for (_,v,_,_,_) in g[k[-m],k1]]):
                     continue
                 for t in topLevelCovers(g, N, M, u+(u1,), k+(k1,), d_min+(d1_min,), d_max+(d1_max,), ts+(ts1,)):
