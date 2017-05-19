@@ -68,6 +68,15 @@ def causes(v):
             asm_type = dict(states[0])[object_id]
             if asm_type == 'valve_screw':
                 g.add((states[0],"grasp and remove screw from valve",(object_id,)))
+        if tasks == ("insert screw in valve","release"):
+            num_rotations = 0
+            rotation_level = 4 - num_rotations # 4 = initial inserted, unscrewed
+            g.add((states[0],"insert and screw valve",(rotation_level,)))
+        if tasks == ("move arm and grasp","remove screw from valve"):
+            object_id = args[0][1]
+            asm_type = dict(states[0])[object_id]
+            if asm_type == 'valve_screw':
+                g.add((states[0],"grasp and remove screw from valve",(object_id,)))
     if len(v)==3:
         if tasks == ("move arm and grasp","move grasped object","release"):
             arm_0, object_id = args[0]
@@ -86,6 +95,17 @@ def causes(v):
             asm_type = dict(states[0])[object_id]
             if (arm_0==arm_2) and (asm_type=="ball_swivel"):
                 g.add((states[0],tasks[1],()))
+        if tasks == ("insert screw in valve","screw valve","release"):
+            num_rotations = args[1][1]
+            rotation_level = 4 - num_rotations # 4 = initial inserted, unscrewed
+            g.add((states[0],"insert and screw valve",(rotation_level,)))
+        if tasks == ("move arm and grasp","screw valve","release"):
+            arm_0, arm_1, arm_2 = args[0][0], args[1][0], args[2][0]
+            if arm_0 == arm_1 and arm_1 == arm_2:
+                screw_id = args[0][1]
+                num_rotations = args[1][1]
+                rotation_level = 4 - num_rotations # 4 = initial inserted, unscrewed
+                g.add((states[0],"grasp and screw valve",(screw_id, rotation_level,)))
     return g
 
 def run_experiments(check_irr=True):
