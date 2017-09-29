@@ -221,3 +221,19 @@ def minParametersTLCovers(tlcovs):
     mp = min([count_params(u) for (u,_,_,_,_) in tlcovs])
     tlcovs_mp = [(u,k,d_min,d_max,ts) for (u,k,d_min,d_max,ts) in tlcovs if count_params(u)==mp]
     return tlcovs_mp, mp
+
+def logCovers(covers, log_file, include_states=False):
+    for c in range(len(covers)):
+        cover = covers[c]
+        u, k, d_min, d_max, ts = cover
+
+        log_file.write("Cover # {} (length {}):\n".format(c, len(u)))
+        for i in range(len(u)):
+            root_node = u[i]
+            state, name, parameters = root_node
+            log_file.write(" Task {}: {} {}\n".format(i, name, parameters))
+            if include_states:
+                log_file.write("  Current state: {}\n".format(state))
+            log_file.write("  Covers leaves {}-{}, {} nodes in tree\n".format(k[i],k[i+1]-1, ts[i]))
+            log_file.write("  Min/max causal chain length to leaves: {}/{}\n".format(d_min[i],d_max[i]))
+        log_file.write("\n")
