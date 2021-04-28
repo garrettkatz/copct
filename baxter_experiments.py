@@ -111,11 +111,13 @@ def causes(v):
 def run_experiments(check_irr=True):
     results = {}
     # Dock maintenance demos
-    demos = ["demo_%s_%d"%(skill, di) for di in [1,2] for skill in ["remove_red_drive","replace_red_with_green","replace_red_with_spare","swap_red_with_green"]]
+    # demos = ["demo_%s_%d"%(skill, di) for di in [1,2] for skill in ["remove_red_drive","replace_red_with_green","replace_red_with_spare","swap_red_with_green"]]
+    demos = ["demo_%s_%d"%(skill, di) for skill in ["remove_red_drive","replace_red_with_green","replace_red_with_spare","swap_red_with_green"] for di in [1,2]]
     # Block stacking demos
     demos += ["demo_il", "demo_ai", "demo_um"]
     # Cover demos
     print("Covering demos...")
+    Ns = {}
     for demo_name in demos:
         print(demo_name)
         # import demo and ground truth
@@ -124,6 +126,7 @@ def run_experiments(check_irr=True):
         exec_str = "from baxter_corpus.%s_ground_truth import ground_truth"%demo_name
         exec(exec_str, globals())
         # Cover and prune by each parsimony criterion
+        Ns[demo_name] = len(demo)
         results[demo_name] = {}
         start_time = time.clock()
         status, tlcovs, g = copct.explain(causes, demo, M=M)
@@ -152,16 +155,23 @@ def run_experiments(check_irr=True):
         results[demo_name]["u in tlcovs_fsx"] = ground_truth in results[demo_name]["tlcovs_fsx"]
         results[demo_name]["u in tlcovs_irr"] = ground_truth in results[demo_name]["tlcovs_irr"]
     # display results
-    criteria = ["_mc", "_irr", "_md", "_xd", "_mp", "_fsn", "_fsx"]
+    criteria = ["", "_mc", "_irr", "_md", "_xd", "_mp", "_fsn", "_fsx"]
     print("Accuracy:")
     for crit in criteria:
         correct_demos = [d for d in results if results[d]["u in tlcovs%s"%crit]]
         print('%s: %f%%'%(crit, 1.0*len(correct_demos)/len(demos)))
     print("# of covers found:")
-    print(["Demo","Runtime (explain)", "Runtime (irr)"]+criteria)
+    print(["Demo","N", "Runtime (explain)", "Runtime (irr)"]+criteria)
     for demo_name in demos:
         num_tlcovs = [len(results[demo_name]["tlcovs%s"%crit]) for crit in criteria]
         print([demo_name, results[demo_name]["run_time"], results[demo_name]["run_time_irr"]]+num_tlcovs)
+    print("Latex:")
+    print(["Demo","N","Runtime (explain)", "Runtime (irr)"]+criteria)
+    for demo_name in demos:
+        num_tlcovs = [str(len(results[demo_name]["tlcovs%s"%crit])) for crit in criteria]
+        print("%s & %d & %f & %f & %s"%(
+            demo_name, Ns[demo_name], results[demo_name]["run_time"], results[demo_name]["run_time_irr"],
+            " & ".join(num_tlcovs)))
     return results
 
 if __name__ == "__main__":

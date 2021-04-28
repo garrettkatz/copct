@@ -20,7 +20,7 @@ def singletonSubCovers(causes, M, w, verbose=False, timeout=300):
                 d_max is the longest causal chain length in the covering tree,
                 ts is the total number of nodes in the covering tree.
     """
-    start = time.clock()
+    start = time.process_time()
     # Initialize g
     N = len(w)
     g = [{(j,k): set() for (j,k) in itr.combinations(range(N+1),2)}]
@@ -31,7 +31,7 @@ def singletonSubCovers(causes, M, w, verbose=False, timeout=300):
         for m in range(1,M+1):
             for k in itr.combinations(range(N+1),m+1):
                 for uvdt in itr.product(*[g[ell-1][k[i-1],k[i]] for i in range(1,m+1)]):
-                    if time.clock()-start > timeout:
+                    if time.process_time()-start > timeout:
                         return False, g[ell]
                     u = tuple(u for (u,_,_,_,_) in uvdt)
                     d_min = min(d for (_,_,d,_,_) in uvdt) + 1
@@ -94,14 +94,14 @@ def explain(causes, w, M=None, verbose=False, timeout=600, max_tlcovs=13000000, 
     if M is None: M = len(w)
     if verbose: print("Constructing explanations...")
     tlcovs = []
-    start = time.clock()
+    start = time.process_time()
     status, g = singletonSubCovers(causes, M, w, verbose=verbose, timeout=timeout)
     if status == False:
         if verbose: print("singletonSubCovers timed out :(")
         return "SS covers timed out", tlcovs, g
     for t in topLevelCovers(g, len(w), M, narrow=narrow):
         tlcovs.append(t)
-        if time.clock()-start > timeout:
+        if time.process_time()-start > timeout:
             if verbose: print("topLevelCovers timed out :(")
             return "TL covers timed out", tlcovs, g
         if len(tlcovs) > max_tlcovs:
@@ -186,11 +186,11 @@ def irredundantTLCovers(tlcovs, timeout=300):
         tlcovs_irr: The pruned top level covers.
     """
     tlcovs_irr = []
-    start = time.clock()
+    start = time.process_time()
     for (u,k,d_min,d_max,ts) in tlcovs:
         u_is_irr = True # until proven otherwise
         for (other_u,_,_,_,_) in tlcovs:
-            if time.clock()-start > timeout:
+            if time.process_time()-start > timeout:
                 return False, tlcovs_irr
             # skip u1
             if u==other_u: continue
